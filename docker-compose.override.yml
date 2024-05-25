@@ -6,11 +6,10 @@ services:
       - api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:7036;http://+:5188
-      - ConnectionStrings__DefaultConnection=Server=mssql;Database=themgico;User=sa;Password=Password123!;MultipleActiveResultSets=true;Encrypt=false
+      - ASPNETCORE_URLS=http://+:5188
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=Themgico;User=sa;Password=Password123!;MultipleActiveResultSets=true;Encrypt=false
     ports:
-      - "7036"
-      - "5188"
+      - 5188:5188
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro

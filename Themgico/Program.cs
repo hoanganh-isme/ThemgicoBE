@@ -53,8 +53,12 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure AppSettings section
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSettings"));
-builder.Services.AddDbContext<ThemgicoContext>();
-
+builder.Services.AddDbContext<ThemgicoContext>(options =>
+            {
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("DefaultConnection")
+            );
+            });
 
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
@@ -78,6 +82,17 @@ builder.Services.AddAuthentication(options =>
         options.Events = new ApplicationJwtBearEvents();
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
@@ -95,6 +110,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 //if (app.Environment.IsDevelopment())

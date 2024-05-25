@@ -3,7 +3,8 @@ version: '3.4'
 services:
   themgico:
     profiles: ["backend"]
-    image: ${DOCKER_REGISTRY-}themgico
+    container_name: themgico
+    image: themgico
     build:
       context: .
       dockerfile: Themgico/Dockerfile

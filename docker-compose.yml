@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  themgico:
+    profiles: ["backend"]
+    image: ${DOCKER_REGISTRY-}themgico
+    build:
+      context: .
+      dockerfile: Themgico/Dockerfile
+
+  mssql:
+    profiles: ["backend"]
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:latest

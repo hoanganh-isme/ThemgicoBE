@@ -41,7 +41,7 @@ namespace Themgico.Entities
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
-            return builder.Build().GetConnectionString("DefaultConnection");
+            return builder.Build().GetConnectionString("ConnectionStrings:DefaultConnection");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

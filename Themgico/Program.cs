@@ -54,12 +54,10 @@ builder.Services.AddSwaggerGen(c =>
 // Configure AppSettings section
 builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.AddDbContext<ThemgicoContext>(options =>
-            {
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
-            );
-            });
-
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString);
+});
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {

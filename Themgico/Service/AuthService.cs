@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Themgico.DTO;
@@ -48,16 +49,32 @@ namespace Themgico.Service
                 if (user == null || user.Password != model.Password)
                     return ResultDTO<LoginResponseDTO>.Fail("Email or password is wrong");
 
-                // Create token and return the result
-                var userClaim = new Claim("Id", user.Id.ToString());
-                var userRoles = new List<string>(); // You need to get user roles from your database
+                // Create user claims
+                var claims = new List<Claim>
+        {
+            new Claim("Name", user.Name),
+            new Claim("Email", user.Email),
+            new Claim("Id", user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+
+                // Assuming you have a method to get user roles from the database
+                var userRoles = await _context.Accounts
+                                              .Where(ur => ur.Id == user.Id)
+                                              .Select(ur => ur.Role)
+                                              .ToListAsync();
+
+                claims.AddRange(userRoles.Select(userRole => new Claim("Role", userRole)));
+
                 var expireTime = userRoles.Contains("Admin") ? ADMIN_TOKEN_EXPIRE_TIME : TOKEN_EXPIRE_TIME;
-                var token = _tokenService.GetToken(userClaim, userRoles, expireTime);
+                var token = _tokenService.GetToken(claims, expireTime);
+
                 var loginRes = new LoginResponseDTO
                 {
                     AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
                     Expire = token.ValidTo
                 };
+
                 return ResultDTO<LoginResponseDTO>.Success(loginRes);
             }
             catch (Exception err)
@@ -66,6 +83,7 @@ namespace Themgico.Service
                 return ResultDTO<LoginResponseDTO>.Fail("Service is not available");
             }
         }
+
 
         public Task<ResultDTO<string>> UserRegistration(AccountDTO model)
         {

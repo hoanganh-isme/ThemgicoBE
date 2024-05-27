@@ -14,16 +14,8 @@ namespace Themgico.Repositories
             _configuration = configuration;
         }
 
-        public JwtSecurityToken GetToken(Claim userClaim, IEnumerable<string> userRoles, int expireTime)
+        public JwtSecurityToken GetToken(IEnumerable<Claim> claims, int expireTime)
         {
-            var claims = new List<Claim>
-            {
-                userClaim,
-                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            };
-
-            claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
-
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
             var token = new JwtSecurityToken(

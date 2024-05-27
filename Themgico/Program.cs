@@ -58,6 +58,7 @@ builder.Services.AddDbContext<ThemgicoContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseSqlServer(connectionString);
 });
+
 // Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {

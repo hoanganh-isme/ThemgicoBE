@@ -31,22 +31,17 @@ namespace Themgico.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-<<<<<<< Updated upstream
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-=======
->>>>>>> Stashed changes
+                base.OnConfiguring(optionsBuilder);
                 optionsBuilder.UseSqlServer(GetConnectionString());
             }
         }
-                private string GetConnectionString()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                 .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json", true, true)
-                        .Build();
-            var strConn = config[("ConnectionString:DBConnect")];
 
-            return strConn;
+        public string GetConnectionString()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+            return builder.Build().GetConnectionString("ConnectionStrings:DefaultConnection");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

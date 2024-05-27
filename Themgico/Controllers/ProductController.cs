@@ -18,7 +18,7 @@ namespace Themgico.Controllers
             _productService = productService;
         }
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAllProducts() 
+        public async Task<IActionResult> GetAllProducts()
         {
             var result = await _productService.GetAllProducts();
             return StatusCode(result._statusCode, result);

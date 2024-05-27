@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "themgico": "StartDebugging"
+      },
+      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "composeProfile": {
+        "includes": [
+          "backend"
+        ]
+      }
+    }
+  }
+}

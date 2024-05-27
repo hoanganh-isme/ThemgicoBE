@@ -1,0 +1,41 @@
+version: '3.4'
+
+services:
+  themgico:
+    networks:
+      - api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5188
+      - ConnectionStrings__DefaultConnection=Server=mssql;Database=Themgico;User=sa;Password=Password123!;MultipleActiveResultSets=true;Encrypt=false
+    ports:
+      - 5188:5188
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+      mssql:
+        condition: service_healthy
+    restart: on-failure
+  mssql:
+    environment:
+      - SA_PASSWORD=Password123!
+      - ACCEPT_EULA=Y
+    ports:
+      - 1434:1433
+    volumes:
+      - mssql-data:/data/db
+    networks:
+      - api
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "$$SA_PASSWORD" -Q
+        "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+volumes:
+  mssql-data:
+networks:
+  api:
+    name:  api

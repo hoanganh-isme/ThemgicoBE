@@ -31,18 +31,17 @@ namespace Themgico.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
+                base.OnConfiguring(optionsBuilder);
                 optionsBuilder.UseSqlServer(GetConnectionString());
             }
         }
-                private string GetConnectionString()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                 .SetBasePath(Directory.GetCurrentDirectory())
-                        .AddJsonFile("appsettings.json", true, true)
-                        .Build();
-            var strConn = config[("ConnectionString:DBConnect")];
 
-            return strConn;
+        public string GetConnectionString()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json");
+            return builder.Build().GetConnectionString("DefaultConnection");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

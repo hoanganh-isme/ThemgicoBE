@@ -91,13 +91,16 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("admin"));
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IProductService, ProductService>();
-
+builder.Services.AddTransient<INewsService, NewsService>();
 
 var app = builder.Build();
 

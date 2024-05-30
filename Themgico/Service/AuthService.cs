@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Extensions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Themgico.DTO;
@@ -52,8 +53,8 @@ namespace Themgico.Service
                 // Create user claims
                 var claims = new List<Claim>
         {
-            new Claim("Name", user.Name),
-            new Claim("Email", user.Email),
+            new Claim(ClaimTypes.Name, user.Name),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim("Id", user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
@@ -64,9 +65,9 @@ namespace Themgico.Service
                                               .Select(ur => ur.Role)
                                               .ToListAsync();
 
-                claims.AddRange(userRoles.Select(userRole => new Claim("Role", userRole)));
+                claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
 
-                var expireTime = userRoles.Contains("Admin") ? ADMIN_TOKEN_EXPIRE_TIME : TOKEN_EXPIRE_TIME;
+                var expireTime = userRoles.Contains("admin") ? ADMIN_TOKEN_EXPIRE_TIME : TOKEN_EXPIRE_TIME;
                 var token = _tokenService.GetToken(claims, expireTime);
 
                 var loginRes = new LoginResponseDTO
@@ -83,6 +84,7 @@ namespace Themgico.Service
                 return ResultDTO<LoginResponseDTO>.Fail("Service is not available");
             }
         }
+
 
 
         public Task<ResultDTO<string>> UserRegistration(AccountDTO model)

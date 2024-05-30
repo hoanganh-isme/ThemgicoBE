@@ -9,6 +9,5 @@ namespace Themgico.DTO.Category
         public string? CategoryDescription { get; set; }
         public string? Name { get; set; }
 
-        public virtual ICollection<ProductDTO> Products { get; set; }
     }
 }

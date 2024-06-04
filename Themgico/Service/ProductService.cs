@@ -22,7 +22,9 @@ namespace Themgico.Service
             try
             {
                 // Lấy tất cả sản phẩm từ cơ sở dữ liệu
-                var products = await _context.Products.ToListAsync();
+                var products = await _context.Products
+            .Include(p => p.Category) // Bao gồm thông tin danh mục
+            .ToListAsync();
 
                 // Chuyển đổi danh sách sản phẩm sang DTO
                 var productDTOs = products.Select(p => new ProductDTO
@@ -33,7 +35,7 @@ namespace Themgico.Service
                     Price = p.Price,
                     Image = p.Image,
                     Status = p.Status,
-                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category?.Name,
                     //Thêm các trường khác nếu cần thiết
                 }).ToList();
 
@@ -74,7 +76,7 @@ namespace Themgico.Service
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
-                    CategoryId = product.CategoryId,
+                    CategoryName = product.Category?.Name,
                     Image = product.Image,
                     Status = status,
                     Category = new CategoryDTO
@@ -170,7 +172,7 @@ namespace Themgico.Service
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
-                    CategoryId = product.CategoryId,
+                    CategoryName = product.Category?.Name,
                     Image = product.Image,
                     Status = product.Status
                 };
@@ -217,7 +219,7 @@ namespace Themgico.Service
                     Name = product.Name,
                     Description = product.Description,
                     Price = product.Price,
-                    CategoryId = product.CategoryId,
+                    CategoryName = product.Category?.Name,
                     Image = product.Image,
                     Status = product.Status
                 };

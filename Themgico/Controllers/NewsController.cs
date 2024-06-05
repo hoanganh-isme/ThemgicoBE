@@ -25,7 +25,6 @@ namespace Themgico.Controllers
             return StatusCode(result._statusCode, result);
         }
         [HttpGet("GetNewsById/{id}")]
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetNewsById(int id)
         {
             var result = await _newsService.GetNewsById(id);

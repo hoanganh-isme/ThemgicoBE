@@ -18,10 +18,6 @@ namespace Themgico.Service
             _context = context;
             _claimsPrincipal = httpContextAccessor.HttpContext.User;
         }
-        Task<ResultDTO<List<AccountDTO>>> IUserService.GetAll()
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<Account> GetCurrentUser()
         {
@@ -104,5 +100,100 @@ namespace Themgico.Service
                 return false;
             }
         }
+
+        public async Task<ResultDTO<string>> UpdateUserStatus(int id)
+        {
+            try
+            {
+                var user = await _context.Accounts.FindAsync(id);
+                if (user == null)
+                    return ResultDTO<string>.Fail("User not found");
+
+                // Đảo ngược trạng thái hiện tại của user
+                user.Status = !user.Status;
+                _context.Accounts.Update(user);
+                await _context.SaveChangesAsync();
+                return ResultDTO<string>.Success("User status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ResultDTO<string>.Fail("Failed to update user status");
+            }
+        }
+            public async Task<ResultDTO<AccountDTO>> CreateAccountStaff(AccountDTO userDTO)
+        {
+            try
+            {
+                // Validation
+                if (string.IsNullOrEmpty(userDTO.Name))
+                {
+                    return ResultDTO<AccountDTO>.Fail("Name is required.");
+                }
+
+                if (string.IsNullOrEmpty(userDTO.Email))
+                {
+                    return ResultDTO<AccountDTO>.Fail("Email is required.");
+                }
+
+                if (string.IsNullOrEmpty(userDTO.Password))
+                {
+                    return ResultDTO<AccountDTO>.Fail("Password is required.");
+                }
+
+                if (string.IsNullOrEmpty(userDTO.Role))
+                {
+                    return ResultDTO<AccountDTO>.Fail("Role is required.");
+                }
+
+                var user = new Account
+                {
+                    Name = userDTO.Name,
+                    Email = userDTO.Email,
+                    Password = userDTO.Password,
+                    Phone = userDTO.Phone,
+                    Role = userDTO.Role,
+                    Status = userDTO.Status ?? true // Default to true if null
+                };
+
+                _context.Accounts.Add(user);
+                await _context.SaveChangesAsync();
+
+                userDTO.Id = user.Id;
+
+                return ResultDTO<AccountDTO>.Success(userDTO);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ResultDTO<AccountDTO>.Fail("Failed to create account staff.");
+            }
+        }
+
+        public async Task<ResultDTO<List<AccountDTO>>> GetAll()
+        {
+            try
+            {
+                var users = await _context.Accounts.ToListAsync();
+
+                var userDTOs = users.Select(user => new AccountDTO
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Role = user.Role,
+                    Status = user.Status
+                }).ToList();
+
+                return ResultDTO<List<AccountDTO>>.Success(userDTOs);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ResultDTO<List<AccountDTO>>.Fail("Failed to fetch all accounts.");
+            }
+        }
+
     }
 }

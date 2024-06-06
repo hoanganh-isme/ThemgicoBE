@@ -25,7 +25,6 @@ namespace Themgico.Controllers
             var result = await _productService.GetAllProducts();
             return StatusCode(result._statusCode, result);
         }
-        [Authorize(Roles = "admin")]
         [HttpGet("GetProductById/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
@@ -52,6 +51,13 @@ namespace Themgico.Controllers
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var result = await _productService.DeleteProduct(id);
+            return StatusCode(result._statusCode, result);
+        }
+        [HttpPut("updatestatus/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUserStatus(int id)
+        {
+            var result = await _productService.UpdateProductStatus(id);
             return StatusCode(result._statusCode, result);
         }
     }

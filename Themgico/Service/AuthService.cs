@@ -50,6 +50,16 @@ namespace Themgico.Service
                 if (user == null || user.Password != model.Password)
                     return ResultDTO<LoginResponseDTO>.Fail("Email or password is wrong");
 
+                // Get user roles
+                var userRoles = await _context.Accounts
+                                              .Where(ur => ur.Id == user.Id)
+                                              .Select(ur => ur.Role)
+                                              .ToListAsync();
+
+                // Check if the user is staff and their status is false
+                if (userRoles.Contains("staff") && !user.Status.GetValueOrDefault())
+                    return ResultDTO<LoginResponseDTO>.Fail("Staff account is disabled", 403);
+
                 // Create user claims
                 var claims = new List<Claim>
         {
@@ -58,12 +68,6 @@ namespace Themgico.Service
             new Claim("Id", user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
-
-                // Assuming you have a method to get user roles from the database
-                var userRoles = await _context.Accounts
-                                              .Where(ur => ur.Id == user.Id)
-                                              .Select(ur => ur.Role)
-                                              .ToListAsync();
 
                 claims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
 

@@ -233,7 +233,26 @@ namespace Themgico.Service
             }
         }
 
+        public async Task<ResultDTO<string>> UpdateProductStatus(int id)
+        {
+            try
+            {
+                var product = await _context.Products.FindAsync(id);
+                if (product == null)
+                    return ResultDTO<string>.Fail("Product not found");
 
+                // Đảo ngược trạng thái hiện tại của user
+                product.Status = !product.Status;
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync();
+                return ResultDTO<string>.Success("Product status updated successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return ResultDTO<string>.Fail("Failed to update product status");
+            }
+        }
 
     }
 }

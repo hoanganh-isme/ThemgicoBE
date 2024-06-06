@@ -10,5 +10,6 @@ namespace Themgico.Service.Interface
         public Task<ResultDTO<CreateProductDTO>> CreateProduct(CreateProductDTO productDTO);
         public Task<ResultDTO<ProductDTO>> DeleteProduct(int id);
         public Task<ResultDTO<ProductDTO>> UpdateProduct(UpdateProductDTO productDTO);
+        public Task<ResultDTO<string>> UpdateProductStatus(int id);
     }
 }

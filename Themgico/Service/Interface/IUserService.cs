@@ -9,10 +9,13 @@ namespace Themgico.Service.Interface
     {
         public Task<Account> GetCurrentUser();
         //public Task<ResultDTO<UserProfileDTO>> GetUserProfile();
-        public Task<ResultDTO<List<AccountDTO>>> GetAll();
+        
         public Task<bool> CheckPasswordAsync(Account user, string password);
         public Task<bool> UpdatePassword(Account user, string newPassword);
         //Task<ResultDTO<string>> UpdateUserProfile(UserProfileUpdateDTO updateUser);
-        //Task<ResultDTO<string>> UpdateUserStatus(int id, string status);
+        public Task<ResultDTO<string>> UpdateUserStatus(int id);
+        public Task<ResultDTO<AccountDTO>> CreateAccountStaff(AccountDTO user);
+        public Task<ResultDTO<List<AccountDTO>>> GetAll();
+
     }
 }
